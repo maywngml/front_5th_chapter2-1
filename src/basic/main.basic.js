@@ -2,7 +2,6 @@ import { products } from '../shared/config/product';
 
 var sel, addBtn, cartDisp, sum, stockInfo;
 var lastSel,
-  bonusPts = 0,
   totalAmt = 0,
   itemCnt = 0;
 function main() {
@@ -68,6 +67,7 @@ function main() {
     // }, 60000);
   }, Math.random() * 20000);
 }
+
 function updateSelectOptions() {
   sel.innerHTML = '';
 
@@ -82,6 +82,7 @@ function updateSelectOptions() {
     sel.appendChild(option);
   });
 }
+
 function calcCart() {
   totalAmt = 0;
   itemCnt = 0;
@@ -135,19 +136,23 @@ function calcCart() {
     sum.appendChild(span);
   }
   updateStockInfo();
-  renderBonusPts();
+  renderBonusPoints();
 }
-const renderBonusPts = () => {
-  bonusPts = Math.floor(totalAmt / 1000);
-  var ptsTag = document.getElementById('loyalty-points');
-  if (!ptsTag) {
-    ptsTag = document.createElement('span');
-    ptsTag.id = 'loyalty-points';
-    ptsTag.className = 'text-blue-500 ml-2';
-    sum.appendChild(ptsTag);
+// 총액에 따른 보너스 포인트 점수를 계산하고 화면에 보여줍니다.
+const renderBonusPoints = () => {
+  const bonusPoints = Math.floor(totalAmt / 1000);
+  let pointsTag = document.getElementById('loyalty-points');
+
+  if (!pointsTag) {
+    pointsTag = document.createElement('span');
+    pointsTag.id = 'loyalty-points';
+    pointsTag.className = 'text-blue-500 ml-2';
+    sum.appendChild(pointsTag);
   }
-  ptsTag.textContent = '(포인트: ' + bonusPts + ')';
+
+  pointsTag.textContent = `(포인트: ${bonusPoints})`;
 };
+
 function updateStockInfo() {
   var infoMsg = '';
   products.forEach(function (item) {
