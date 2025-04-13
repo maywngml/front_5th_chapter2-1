@@ -108,9 +108,9 @@ function getDiscountRate(totalCount, totalPrice, totalDiscountedPrice) {
   return discountRate;
 }
 
-// 장바구니에 담긴 아이템의 총 가격을 계산합니다.
-function calcCart() {
+function calcTotalCart() {
   const cartItemElements = cartItems.children;
+
   let totalPrice = 0,
     totalCount = 0,
     totalDiscountedPrice = 0;
@@ -130,17 +130,25 @@ function calcCart() {
     totalDiscountedPrice += currentTotalPrice * (1 - currentDiscountRate);
   }
 
+  return { totalPrice, totalCount, totalDiscountedPrice };
+}
+
+// 장바구니에 담긴 아이템의 총 가격을 계산합니다.
+function calcCart() {
+  const { totalPrice, totalCount, totalDiscountedPrice } = calcTotalCart();
+
   const discountRate = getDiscountRate(
     totalCount,
     totalPrice,
     totalDiscountedPrice,
   );
 
-  sum.textContent = '총액: ' + Math.round(totalDiscountedPrice) + '원';
+  sum.textContent = `총액: ${Math.round(totalDiscountedPrice)}원`;
+
   if (discountRate > 0) {
     var span = document.createElement('span');
     span.className = 'text-green-500 ml-2';
-    span.textContent = '(' + (discountRate * 100).toFixed(1) + '% 할인 적용)';
+    span.textContent = `(${(discountRate * 100).toFixed(1)}% 할인 적용)`;
     sum.appendChild(span);
   }
 
