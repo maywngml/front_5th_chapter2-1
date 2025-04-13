@@ -113,21 +113,21 @@ function calcCart() {
   const cartItemElements = cartItems.children;
   let totalPrice = 0,
     totalCount = 0,
-    // TODO: 변수명 더 직관적으로 변경
     totalDiscountedPrice = 0;
   // 장바구니에 담긴 아이템의 정보로
   for (const cartItemElement of cartItemElements) {
     const currentItem = products.find(
       (product) => product.id === cartItemElement.id,
     );
-    const quantity = parseInt(
+    const currentCount = parseInt(
       cartItemElement.querySelector('span').textContent.split('x ')[1],
     );
-    const subTotalPrice = currentItem.price * quantity;
-    const discount = quantity >= 10 ? currentItem.discount : 0;
-    totalCount += quantity;
-    totalPrice += subTotalPrice;
-    totalDiscountedPrice += subTotalPrice * (1 - discount);
+    const currentTotalPrice = currentItem.price * currentCount;
+    const currentDiscountRate =
+      currentCount >= 10 ? currentItem.discountRate : 0;
+    totalCount += currentCount;
+    totalPrice += currentTotalPrice;
+    totalDiscountedPrice += currentTotalPrice * (1 - currentDiscountRate);
   }
 
   const discountRate = getDiscountRate(
