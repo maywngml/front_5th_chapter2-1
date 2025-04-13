@@ -1,45 +1,46 @@
+import { createElement } from '../shared/lib/utils';
 import { products } from '../shared/config/product';
 
-var lastSel;
-
+// 화면에 돔을 그리는 함수입니다.
 function renderElement() {
-  var sel, addBtn, cartItems, sum, stockInfo;
-  var root = document.getElementById('app');
-  let cont = document.createElement('div');
-  var wrap = document.createElement('div');
-  let hTxt = document.createElement('h1');
-  cartItems = document.createElement('div');
-  sum = document.createElement('div');
-  sel = document.createElement('select');
-  addBtn = document.createElement('button');
-  stockInfo = document.createElement('div');
-  cartItems.id = 'cart-items';
-  sum.id = 'cart-total';
-  sel.id = 'product-select';
-  addBtn.id = 'add-to-cart';
-  stockInfo.id = 'stock-status';
+  const root = document.getElementById('app');
+  createElement(root, 'div', { id: 'container' });
 
-  wrap.className =
-    'max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl p-8';
-  hTxt.className = 'text-2xl font-bold mb-4';
-  sum.className = 'text-xl font-bold my-4';
-  sel.className = 'border rounded p-2 mr-2';
-  addBtn.className = 'bg-blue-500 text-white px-4 py-2 rounded';
-  stockInfo.className = 'text-sm text-gray-500 mt-2';
-  hTxt.textContent = '장바구니';
-  addBtn.textContent = '추가';
+  const container = document.getElementById('container');
+  createElement(container, 'div', {
+    id: 'wrapper',
+    className:
+      'max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl p-8',
+  });
 
-  wrap.appendChild(hTxt);
-  wrap.appendChild(cartItems);
-  wrap.appendChild(sum);
-  wrap.appendChild(sel);
-  wrap.appendChild(addBtn);
-  wrap.appendChild(stockInfo);
-  cont.appendChild(wrap);
-  root.appendChild(cont);
+  const wrapper = document.getElementById('wrapper');
+  createElement(wrapper, 'h1', {
+    className: 'text-2xl font-bold mb-4',
+    textContent: '장바구니',
+  });
+  createElement(wrapper, 'div', { id: 'cart-items' });
+  createElement(wrapper, 'div', {
+    id: 'cart-total',
+    className: 'text-xl font-bold my-4',
+  });
+  createElement(wrapper, 'select', {
+    id: 'product-select',
+    className: 'border rounded p-2 mr-2',
+  });
+  createElement(wrapper, 'button', {
+    id: 'add-to-cart',
+    className: 'bg-blue-500 text-white px-4 py-2 rounded',
+    textContent: '추가',
+  });
+  createElement(wrapper, 'div', {
+    id: 'stock-status',
+    className: 'text-sm text-gray-500 mt-2',
+  });
 }
 
 function main() {
+  var lastSel;
+
   renderElement();
 
   updateSelectOptions();
