@@ -1,20 +1,18 @@
 import { products } from '../shared/config/product';
 
-var sel, addBtn, cartDisp, sum, stockInfo;
-var lastSel,
-  totalAmt = 0,
-  itemCnt = 0;
+var sel, addBtn, cartItems, sum, stockInfo;
+var lastSel;
 function main() {
   var root = document.getElementById('app');
   let cont = document.createElement('div');
   var wrap = document.createElement('div');
   let hTxt = document.createElement('h1');
-  cartDisp = document.createElement('div');
+  cartItems = document.createElement('div');
   sum = document.createElement('div');
   sel = document.createElement('select');
   addBtn = document.createElement('button');
   stockInfo = document.createElement('div');
-  cartDisp.id = 'cart-items';
+  cartItems.id = 'cart-items';
   sum.id = 'cart-total';
   sel.id = 'product-select';
   addBtn.id = 'add-to-cart';
@@ -31,7 +29,7 @@ function main() {
   addBtn.textContent = '추가';
   updateSelectOptions();
   wrap.appendChild(hTxt);
-  wrap.appendChild(cartDisp);
+  wrap.appendChild(cartItems);
   wrap.appendChild(sum);
   wrap.appendChild(sel);
   wrap.appendChild(addBtn);
@@ -83,64 +81,75 @@ function updateSelectOptions() {
   });
 }
 
-function calcCart() {
-  totalAmt = 0;
-  itemCnt = 0;
-  var cartItems = cartDisp.children;
-  var subTot = 0;
-  for (var i = 0; i < cartItems.length; i++) {
-    (function () {
-      var curItem;
-      // TODO: find로 변경하면 될듯
-      for (var j = 0; j < products.length; j++) {
-        if (products[j].id === cartItems[i].id) {
-          curItem = products[j];
-          break;
-        }
-      }
-      var q = parseInt(
-        cartItems[i].querySelector('span').textContent.split('x ')[1],
-      );
-      var itemTot = curItem.price * q;
-      var disc = 0;
-      itemCnt += q;
-      subTot += itemTot;
-      if (q >= 10) {
-        disc = curItem.discount;
-      }
-      totalAmt += itemTot * (1 - disc);
-    })();
-  }
-  let discRate = 0;
-  if (itemCnt >= 30) {
-    var bulkDisc = totalAmt * 0.25;
-    var itemDisc = subTot - totalAmt;
-    if (bulkDisc > itemDisc) {
-      totalAmt = subTot * (1 - 0.25);
-      discRate = 0.25;
+// 현재 장바구니 속 아이템의 총 개수와 조건에 따라 할인율을 계산해 반환합니다.
+function getDiscountRate(totalCount, totalPrice, totalDiscountedPrice) {
+  let discountRate = 0;
+
+  // 총 수량이 30개 이상일 경우 추가 할인 적용 여부를 검토합니다.
+  if (totalCount >= 30) {
+    const currentDiscount = totalPrice - totalDiscountedPrice;
+    // 기존 할인 금액보다 25% 할인이 더 클 경우, 25% 할인을 적용합니다.
+    if (totalDiscountedPrice * 0.25 > currentDiscount) {
+      totalDiscountedPrice = totalPrice * (1 - 0.25);
+      discountRate = 0.25;
     } else {
-      discRate = (subTot - totalAmt) / subTot;
+      discountRate = (totalPrice - totalDiscountedPrice) / totalPrice;
     }
   } else {
-    discRate = (subTot - totalAmt) / subTot;
+    discountRate = (totalPrice - totalDiscountedPrice) / totalPrice;
   }
+
+  // 화요일에는 특별 할인이 적용됩니다.
   if (new Date().getDay() === 2) {
-    totalAmt *= 1 - 0.1;
-    discRate = Math.max(discRate, 0.1);
+    totalDiscountedPrice *= 1 - 0.1;
+    discountRate = Math.max(discountRate, 0.1);
   }
-  sum.textContent = '총액: ' + Math.round(totalAmt) + '원';
-  if (discRate > 0) {
+
+  return discountRate;
+}
+
+// 장바구니에 담긴 아이템의 총 가격을 계산합니다.
+function calcCart() {
+  const cartItemElements = cartItems.children;
+  let totalPrice = 0,
+    totalCount = 0,
+    // TODO: 변수명 더 직관적으로 변경
+    totalDiscountedPrice = 0;
+  // 장바구니에 담긴 아이템의 정보로
+  for (const cartItemElement of cartItemElements) {
+    const currentItem = products.find(
+      (product) => product.id === cartItemElement.id,
+    );
+    const quantity = parseInt(
+      cartItemElement.querySelector('span').textContent.split('x ')[1],
+    );
+    const subTotalPrice = currentItem.price * quantity;
+    const discount = quantity >= 10 ? currentItem.discount : 0;
+    totalCount += quantity;
+    totalPrice += subTotalPrice;
+    totalDiscountedPrice += subTotalPrice * (1 - discount);
+  }
+
+  const discountRate = getDiscountRate(
+    totalCount,
+    totalPrice,
+    totalDiscountedPrice,
+  );
+
+  sum.textContent = '총액: ' + Math.round(totalDiscountedPrice) + '원';
+  if (discountRate > 0) {
     var span = document.createElement('span');
     span.className = 'text-green-500 ml-2';
-    span.textContent = '(' + (discRate * 100).toFixed(1) + '% 할인 적용)';
+    span.textContent = '(' + (discountRate * 100).toFixed(1) + '% 할인 적용)';
     sum.appendChild(span);
   }
+
   updateStockInfo();
-  renderBonusPoints();
+  renderBonusPoints(totalDiscountedPrice);
 }
 // 총액에 따른 보너스 포인트 점수를 계산하고 화면에 보여줍니다.
-const renderBonusPoints = () => {
-  const bonusPoints = Math.floor(totalAmt / 1000);
+const renderBonusPoints = (totalAmount) => {
+  const bonusPoints = Math.floor(totalAmount / 1000);
   let pointsTag = document.getElementById('loyalty-points');
 
   if (!pointsTag) {
@@ -205,7 +214,7 @@ addBtn.addEventListener('click', function () {
         '<button class="remove-item bg-red-500 text-white px-2 py-1 rounded" data-product-id="' +
         itemToAdd.id +
         '">삭제</button></div>';
-      cartDisp.appendChild(newItem);
+      cartItems.appendChild(newItem);
       itemToAdd.quantity--;
     }
     calcCart();
@@ -213,7 +222,7 @@ addBtn.addEventListener('click', function () {
   }
 });
 // 나름 이벤트 위임인 것 같은데, 수량변경 or 삭제 버튼 클릭 핸들러 함수
-cartDisp.addEventListener('click', function (event) {
+cartItems.addEventListener('click', function (event) {
   var tgt = event.target;
   if (
     tgt.classList.contains('quantity-change') ||
