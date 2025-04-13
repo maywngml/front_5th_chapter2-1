@@ -93,7 +93,6 @@ function calcCart() {
           break;
         }
       }
-      // TODO: q -> quantity로 변경
       var q = parseInt(
         cartItems[i].querySelector('span').textContent.split('x ')[1],
       );
@@ -101,13 +100,8 @@ function calcCart() {
       var disc = 0;
       itemCnt += q;
       subTot += itemTot;
-      // 10개 이상 사면 할인 -> 할인율을 상품 정보에 저장해놓으면 되지 않아?
       if (q >= 10) {
-        if (curItem.id === 'p1') disc = 0.1;
-        else if (curItem.id === 'p2') disc = 0.15;
-        else if (curItem.id === 'p3') disc = 0.2;
-        else if (curItem.id === 'p4') disc = 0.05;
-        else if (curItem.id === 'p5') disc = 0.25;
+        disc = curItem.discount;
       }
       totalAmt += itemTot * (1 - disc);
     })();
