@@ -67,7 +67,7 @@ function main() {
     // }, 60000);
   }, Math.random() * 20000);
 }
-
+// 상품 선택 옵션을 업데이트합니다.
 function updateSelectOptions() {
   sel.innerHTML = '';
 
@@ -152,20 +152,18 @@ const renderBonusPoints = () => {
 
   pointsTag.textContent = `(포인트: ${bonusPoints})`;
 };
-
+// 상품들의 재고 정보를 업데이트합니다.
 function updateStockInfo() {
-  var infoMsg = '';
+  let infoMsg = '';
+
   products.forEach(function (item) {
     if (item.quantity < 5) {
-      infoMsg +=
-        item.name +
-        ': ' +
-        (item.quantity > 0
-          ? '재고 부족 (' + item.quantity + '개 남음)'
-          : '품절') +
-        '\n';
+      infoMsg += `${item.name}: ${
+        item.quantity > 0 ? '재고 부족 (' + item.quantity + '개 남음)' : '품절'
+      }\n`;
     }
   });
+
   stockInfo.textContent = infoMsg;
 }
 main();
