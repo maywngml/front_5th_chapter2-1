@@ -36,7 +36,7 @@ function main() {
   wrap.appendChild(stockInfo);
   cont.appendChild(wrap);
   root.appendChild(cont);
-  calcCart();
+  updateCart();
   setTimeout(function () {
     // 타임 세일 팝업 임시로 막아놓음
     // setInterval(function () {
@@ -108,13 +108,16 @@ function getDiscountRate(totalCount, totalPrice, totalDiscountedPrice) {
   return discountRate;
 }
 
+// 장바구니에 담긴 아이템들의 총 가격, 개수, 할인된 가격을 계산합니다.
 function calcTotalCart() {
+  // 장바구니에 담긴 아이템들이 담긴 엘리먼트 배열
   const cartItemElements = cartItems.children;
-
+  // 총 가격, 개수, 할인된 가격을 담는 변수들입니다.
   let totalPrice = 0,
     totalCount = 0,
     totalDiscountedPrice = 0;
-  // 장바구니에 담긴 아이템의 정보로
+
+  // 장바구니에 담긴 아이템의 가격과 할인율을 확인해 총 가격, 개수, 할인된 가격을 계산합니다.
   for (const cartItemElement of cartItemElements) {
     const currentItem = products.find(
       (product) => product.id === cartItemElement.id,
@@ -125,6 +128,7 @@ function calcTotalCart() {
     const currentTotalPrice = currentItem.price * currentCount;
     const currentDiscountRate =
       currentCount >= 10 ? currentItem.discountRate : 0;
+
     totalCount += currentCount;
     totalPrice += currentTotalPrice;
     totalDiscountedPrice += currentTotalPrice * (1 - currentDiscountRate);
@@ -133,28 +137,34 @@ function calcTotalCart() {
   return { totalPrice, totalCount, totalDiscountedPrice };
 }
 
-// 장바구니에 담긴 아이템의 총 가격을 계산합니다.
-function calcCart() {
-  const { totalPrice, totalCount, totalDiscountedPrice } = calcTotalCart();
+// 장바구니에 총액과 할인율을 표시합니다.
+function renderTotalPrice(totalDiscountedPrice, discountRate) {
+  sum.textContent = `총액: ${Math.round(totalDiscountedPrice)}원`;
 
+  if (discountRate > 0) {
+    const span = document.createElement('span');
+
+    span.className = 'text-green-500 ml-2';
+    span.textContent = `(${(discountRate * 100).toFixed(1)}% 할인 적용)`;
+
+    sum.appendChild(span);
+  }
+}
+
+// 장바구니 정보를 업데이트합니다.
+function updateCart() {
+  const { totalPrice, totalCount, totalDiscountedPrice } = calcTotalCart();
   const discountRate = getDiscountRate(
     totalCount,
     totalPrice,
     totalDiscountedPrice,
   );
 
-  sum.textContent = `총액: ${Math.round(totalDiscountedPrice)}원`;
-
-  if (discountRate > 0) {
-    var span = document.createElement('span');
-    span.className = 'text-green-500 ml-2';
-    span.textContent = `(${(discountRate * 100).toFixed(1)}% 할인 적용)`;
-    sum.appendChild(span);
-  }
-
+  renderTotalPrice(totalDiscountedPrice, discountRate);
   updateStockInfo();
   renderBonusPoints(totalDiscountedPrice);
 }
+
 // 총액에 따른 보너스 포인트 점수를 계산하고 화면에 보여줍니다.
 const renderBonusPoints = (totalAmount) => {
   const bonusPoints = Math.floor(totalAmount / 1000);
@@ -169,6 +179,7 @@ const renderBonusPoints = (totalAmount) => {
 
   pointsTag.textContent = `(포인트: ${bonusPoints})`;
 };
+
 // 상품들의 재고 정보를 업데이트합니다.
 function updateStockInfo() {
   let infoMsg = '';
@@ -225,7 +236,7 @@ addBtn.addEventListener('click', function () {
       cartItems.appendChild(newItem);
       itemToAdd.quantity--;
     }
-    calcCart();
+    updateCart();
     lastSel = selItem;
   }
 });
@@ -271,6 +282,6 @@ cartItems.addEventListener('click', function (event) {
       prod.quantity += remQty;
       itemElem.remove();
     }
-    calcCart();
+    updateCart();
   }
 });
