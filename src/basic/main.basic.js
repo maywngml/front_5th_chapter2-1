@@ -2,10 +2,12 @@ import { createElement } from '../shared/lib/utils';
 import { products } from '../shared/config/product';
 import { BASE_STYLES } from '../shared/styles/base';
 
+// TODO: 파일 분리
 let lastSelectedProductId;
 
 // 화면에 돔을 그리는 함수입니다.
 const renderElement = () => {
+  // 루트 노드에 컨테이너 노드를 추가합니다.
   const root = document.getElementById('app');
   createElement(root, 'div', { id: 'container' });
 
@@ -39,46 +41,44 @@ const renderElement = () => {
     className: BASE_STYLES.STOCK_STATUS,
   });
 };
+
 // TODO: 함수 주석은 더 상세하게 달기
 // 랜덤하게 선택된 상품에 대해 세일이 진행 중임을 알립니다.
 const notifyLuckySale = () => {
-  setTimeout(() => {
-    setInterval(() => {
-      const luckyItem = products[Math.floor(Math.random() * products.length)];
+  setInterval(() => {
+    // 랜덤으로 세일을 진행할 상품을 선택합니다.
+    const luckyItem = products[Math.floor(Math.random() * products.length)];
 
-      if (Math.random() < 0.3 && luckyItem.quantity > 0) {
-        luckyItem.price = Math.round(luckyItem.price * 0.8);
+    // 해당 상품의 재고가 남아있다면 가격을 변경하고 알림창을 띄웁니다.
+    if (luckyItem.quantity > 0) {
+      luckyItem.price = Math.round(luckyItem.price * 0.8);
 
-        alert(`번개세일! ${luckyItem.name}이(가) 20% 할인 중입니다!`);
-        updateSelectOptions();
-      }
-    }, 30000);
-  }, Math.random() * 10000);
+      alert(`번개세일! ${luckyItem.name}이(가) 20% 할인 중입니다!`);
+      updateSelectOptions();
+    }
+  }, 30000);
 };
 
 // 재고가 남아있는 상품 중 하나를 선택해 추가 할인을 적용합니다.
-const suggestPurchase = () => {
-  setTimeout(() => {
-    setInterval(() => {
-      if (!lastSelectedProductId) return;
+const notifyPurchaseSuggestion = () => {
+  setInterval(() => {
+    if (!lastSelectedProductId) return;
 
-      // 재고가 있으며 마지막에 추가된 상품이 아닌 다른 상품을 선택합니다.
-      const suggestedProduct = products.find(
-        (product) =>
-          product.id !== lastSelectedProductId && product.quantity > 0,
+    // 재고가 있으며 마지막에 추가된 상품이 아닌 다른 상품을 선택합니다.
+    const suggestedProduct = products.find(
+      (product) => product.id !== lastSelectedProductId && product.quantity > 0,
+    );
+
+    // 위 조건에 부합하는 상품이 있을 경우 해당 상품 가격을 변경하고 알림창을 생성합니다.
+    if (suggestedProduct) {
+      suggestedProduct.price = Math.round(suggestedProduct.price * 0.95);
+
+      alert(
+        `${suggestedProduct.name}은(는) 어떠세요? 지금 구매하시면 5% 추가 할인!`,
       );
-
-      // 위 조건에 부합하는 상품이 있을 경우 해당 상품 가격을 변경하고 알림창을 생성합니다.
-      if (suggestedProduct) {
-        suggestedProduct.price = Math.round(suggestedProduct.price * 0.95);
-
-        alert(
-          `${suggestedProduct.name}은(는) 어떠세요? 지금 구매하시면 5% 추가 할인!`,
-        );
-        updateSelectOptions();
-      }
-    }, 60000);
-  }, Math.random() * 20000);
+      updateSelectOptions();
+    }
+  }, 60000);
 };
 
 const main = () => {
@@ -86,7 +86,7 @@ const main = () => {
   updateSelectOptions();
   updateCart();
   notifyLuckySale();
-  suggestPurchase();
+  notifyPurchaseSuggestion();
 };
 
 // 상품 선택 옵션을 업데이트합니다.
@@ -201,10 +201,10 @@ const renderBonusPoints = (totalAmount) => {
   let pointsTag = document.getElementById('loyalty-points');
 
   if (!pointsTag) {
-    pointsTag = document.createElement('span');
-    pointsTag.id = 'loyalty-points';
-    pointsTag.className = BASE_STYLES.LOYALTY_POINTS;
-    cartTotal.appendChild(pointsTag);
+    pointsTag = createElement(cartTotal, 'span', {
+      id: 'loyalty-points',
+      className: BASE_STYLES.LOYALTY_POINTS,
+    });
   }
 
   pointsTag.textContent = `(포인트: ${bonusPoints})`;
@@ -257,6 +257,7 @@ const handleClickAddToCart = () => {
       alert('재고가 부족합니다.');
     }
   } else {
+    // TODO: innerHTML 반환하는 함수 생성
     // 상품이 추가되어 있지 않다면 새로 추가합니다.
     const innerHTML = `<span> ${selectedProduct.name} - ${selectedProduct.price}원 x 1</span><div><button class="quantity-change bg-blue-500 text-white px-2 py-1 rounded mr-1" data-product-id="${selectedProduct.id}" data-change="-1">-</button><button class="quantity-change bg-blue-500 text-white px-2 py-1 rounded mr-1" data-product-id="${selectedProduct.id}" data-change="1">+</button><button class="remove-item bg-red-500 text-white px-2 py-1 rounded" data-product-id="${selectedProduct.id}">삭제</button></div>`;
 
