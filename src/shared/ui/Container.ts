@@ -11,7 +11,7 @@ export default function Container(): HTMLDivElement | null {
   const container = createElement<HTMLDivElement>(root, 'div', {
     id: 'container',
   });
-  const wrapper = createElement<HTMLDivElement>(container, 'div', {
+  const wrapper = createElement<HTMLDivElement>(root, 'div', {
     id: 'wrapper',
     className: BASE_STYLES.WRAPPER,
   });
