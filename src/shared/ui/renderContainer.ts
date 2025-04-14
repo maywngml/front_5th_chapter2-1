@@ -1,14 +1,14 @@
 import { createElement } from '../lib/utils';
 import { BASE_STYLES } from '../styles/base';
 
-export default function Container(): HTMLDivElement | null {
+export default function renderContainer() {
   const root = document.getElementById('app');
 
   if (!root) {
-    return null;
+    return;
   }
 
-  const container = createElement<HTMLDivElement>(root, 'div', {
+  createElement<HTMLDivElement>(root, 'div', {
     id: 'container',
   });
   const wrapper = createElement<HTMLDivElement>(root, 'div', {
@@ -20,6 +20,4 @@ export default function Container(): HTMLDivElement | null {
     textContent: '장바구니',
   });
   createElement(wrapper, 'div', { id: 'cart-items' });
-
-  return container;
 }
