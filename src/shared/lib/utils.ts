@@ -1,9 +1,9 @@
-export const createElement = <T>(
+export const createElement = <T extends HTMLElement>(
   root: HTMLElement,
   tagType: keyof HTMLElementTagNameMap,
   options?: Partial<T>,
-) => {
-  const element = document.createElement(tagType);
+): T => {
+  const element = document.createElement(tagType) as T;
 
   if (options) {
     Object.entries(options).forEach(([key, value]) => {
