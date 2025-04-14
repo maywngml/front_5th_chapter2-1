@@ -172,15 +172,15 @@ const calcTotalCart = () => {
 const renderTotalPrice = (totalDiscountedPrice, discountRate) => {
   const cartTotal = document.getElementById('cart-total');
 
+  // 최종 금액을 화면에 표시합니다.
   cartTotal.textContent = `총액: ${Math.round(totalDiscountedPrice)}원`;
 
+  // 할인이 적용될 경우에만 할인율을 화면에 표시합니다.
   if (discountRate > 0) {
-    const span = document.createElement('span');
-
-    span.className = BASE_STYLES.CART_TOTAL;
-    span.textContent = `(${(discountRate * 100).toFixed(1)}% 할인 적용)`;
-
-    cartTotal.appendChild(span);
+    createElement(cartTotal, 'span', {
+      className: BASE_STYLES.CART_TOTAL,
+      textContent: `(${(discountRate * 100).toFixed(1)}% 할인 적용)`,
+    });
   }
 };
 
