@@ -248,7 +248,7 @@ function handleClickAddToCart() {
     createElement(cartItems, 'div', {
       id: selectedProduct.id,
       className: 'flex justify-between items-center mb-2',
-      innerHTML: innerHTML,
+      innerHTML,
     });
 
     selectedProduct.quantity--;
@@ -258,56 +258,62 @@ function handleClickAddToCart() {
   lastSel = selectedProductId;
 }
 
+function changeProductQuantity(change, element, product) {
+  const changeQuantity = parseInt(change);
+  const newQuantity =
+    parseInt(element.querySelector('span').textContent.split('x ')[1]) +
+    changeQuantity;
+  if (
+    newQuantity > 0 &&
+    newQuantity <=
+      product.quantity +
+        parseInt(element.querySelector('span').textContent.split('x ')[1])
+  ) {
+    element.querySelector('span').textContent =
+      element.querySelector('span').textContent.split('x ')[0] +
+      'x ' +
+      newQuantity;
+    product.quantity -= changeQuantity;
+  } else if (newQuantity <= 0) {
+    element.remove();
+    product.quantity -= changeQuantity;
+  } else {
+    alert('재고가 부족합니다.');
+  }
+}
+
+function removeProductFromCart(element, product) {
+  var remQty = parseInt(
+    element.querySelector('span').textContent.split('x ')[1],
+  );
+  product.quantity += remQty;
+  element.remove();
+}
+
+function handleClickCartItems(event) {
+  const target = event.target;
+  if (
+    target.classList.contains('quantity-change') ||
+    target.classList.contains('remove-item')
+  ) {
+    const productId = target.dataset.productId;
+    const productElement = document.getElementById(productId);
+    const product = products.find((product) => product.id === productId);
+
+    if (target.classList.contains('quantity-change')) {
+      changeProductQuantity(target.dataset.change, productElement, product);
+    } else if (target.classList.contains('remove-item')) {
+      removeProductFromCart(productElement, product);
+    }
+
+    updateCart();
+  }
+}
+
 document
   .getElementById('add-to-cart')
   .addEventListener('click', handleClickAddToCart);
 
-// 나름 이벤트 위임인 것 같은데, 수량변경 or 삭제 버튼 클릭 핸들러 함수
 document
   .getElementById('cart-items')
-  .addEventListener('click', function (event) {
-    var tgt = event.target;
-    if (
-      tgt.classList.contains('quantity-change') ||
-      tgt.classList.contains('remove-item')
-    ) {
-      var prodId = tgt.dataset.productId;
-      var itemElem = document.getElementById(prodId);
-      // find 안의 함수를 이렇게 번거롭게 작성할 필요가 있나
-      var prod = products.find(function (p) {
-        return p.id === prodId;
-      });
-      if (tgt.classList.contains('quantity-change')) {
-        var qtyChange = parseInt(tgt.dataset.change);
-        var newQty =
-          parseInt(itemElem.querySelector('span').textContent.split('x ')[1]) +
-          qtyChange;
-        if (
-          newQty > 0 &&
-          newQty <=
-            prod.quantity +
-              parseInt(
-                itemElem.querySelector('span').textContent.split('x ')[1],
-              )
-        ) {
-          itemElem.querySelector('span').textContent =
-            itemElem.querySelector('span').textContent.split('x ')[0] +
-            'x ' +
-            newQty;
-          prod.quantity -= qtyChange;
-        } else if (newQty <= 0) {
-          itemElem.remove();
-          prod.quantity -= qtyChange;
-        } else {
-          alert('재고가 부족합니다.');
-        }
-      } else if (tgt.classList.contains('remove-item')) {
-        var remQty = parseInt(
-          itemElem.querySelector('span').textContent.split('x ')[1],
-        );
-        prod.quantity += remQty;
-        itemElem.remove();
-      }
-      updateCart();
-    }
-  });
+  .addEventListener('click', handleClickCartItems);
