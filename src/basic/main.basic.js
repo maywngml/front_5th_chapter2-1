@@ -1,30 +1,18 @@
 import { createElement } from '../shared/lib/utils';
 import { products } from '../shared/config/product';
 import { BASE_STYLES } from '../shared/styles/base';
+import { Container } from '../shared/ui';
 
 // TODO: 파일 분리
 let lastSelectedProductId;
 
 // 화면에 돔을 그리는 함수입니다.
 const renderElement = () => {
-  // 루트 엘리먼트에 컨테이너 엘리먼트를 추가합니다.
-  const root = document.getElementById('app');
-  createElement(root, 'div', { id: 'container' });
-
-  // 컨테이너 엘리먼트에 wrapper 엘리먼트를 추가합니다.
-  const container = document.getElementById('container');
-  createElement(container, 'div', {
-    id: 'wrapper',
-    className: BASE_STYLES.WRAPPER,
-  });
+  // 컨테이너 엘리먼트를 생성합니다.
+  const container = Container();
 
   // wrapper 엘리먼트에 제목, 셀렉트 엘리먼트 등을 추가합니다.
   const wrapper = document.getElementById('wrapper');
-  createElement(wrapper, 'h1', {
-    className: BASE_STYLES.TITLE,
-    textContent: '장바구니',
-  });
-  createElement(wrapper, 'div', { id: 'cart-items' });
   createElement(wrapper, 'div', {
     id: 'cart-total',
     className: BASE_STYLES.CART_TOTAL,
