@@ -74,6 +74,7 @@ function main() {
     // }, 60000);
   }, Math.random() * 20000);
 }
+
 // 상품 선택 옵션을 업데이트합니다.
 function updateSelectOptions() {
   const select = document.getElementById('product-select');
@@ -209,6 +210,7 @@ function updateStockInfo() {
 
   stockInfo.textContent = infoMsg;
 }
+
 main();
 
 function handleClickAddToCart() {
@@ -260,33 +262,31 @@ function handleClickAddToCart() {
 
 function changeProductQuantity(change, element, product) {
   const changeQuantity = parseInt(change);
-  const newQuantity =
-    parseInt(element.querySelector('span').textContent.split('x ')[1]) +
-    changeQuantity;
-  if (
-    newQuantity > 0 &&
-    newQuantity <=
-      product.quantity +
-        parseInt(element.querySelector('span').textContent.split('x ')[1])
-  ) {
-    element.querySelector('span').textContent =
-      element.querySelector('span').textContent.split('x ')[0] +
-      'x ' +
-      newQuantity;
-    product.quantity -= changeQuantity;
-  } else if (newQuantity <= 0) {
+  let textContent = element.querySelector('span').textContent;
+  const newQuantity = parseInt(textContent.split('x ')[1]) + changeQuantity;
+
+  // 변경될 수량이 0과 같거나 작다면 장바구니에서 해당 상품을 제거합니다.
+  if (newQuantity <= 0) {
     element.remove();
     product.quantity -= changeQuantity;
+  } else if (changeQuantity <= product.quantity) {
+    // 상품 재고가 충분하다면 수량을 변경합니다.
+    element.querySelector('span').textContent = textContent.replace(
+      /x\s*\d+$/,
+      `x ${newQuantity}`,
+    );
+    product.quantity -= changeQuantity;
   } else {
+    // 재고가 부족하다면 알림창을 표시합니다.
     alert('재고가 부족합니다.');
   }
 }
 
 function removeProductFromCart(element, product) {
-  var remQty = parseInt(
+  const removeQuantity = parseInt(
     element.querySelector('span').textContent.split('x ')[1],
   );
-  product.quantity += remQty;
+  product.quantity += removeQuantity;
   element.remove();
 }
 
