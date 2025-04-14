@@ -1,7 +1,7 @@
 import { createElement } from '@/shared/lib/utils';
 import { BASE_STYLES } from '@/shared/styles/base';
 
-export default function CartTotal(): HTMLDivElement | null {
+export default function renderCartTotal(): HTMLDivElement | null {
   const root = document.getElementById('wrapper');
 
   if (!root) {

@@ -2,6 +2,7 @@ import { createElement } from '../shared/lib/utils';
 import { products } from '../shared/config/product';
 import { BASE_STYLES } from '../shared/styles/base';
 import { Container } from '../shared/ui';
+import { renderCartTotal } from '../features/cart/ui';
 
 // TODO: 파일 분리
 let lastSelectedProductId;
@@ -9,14 +10,13 @@ let lastSelectedProductId;
 // 화면에 돔을 그리는 함수입니다.
 const renderElement = () => {
   // 컨테이너 엘리먼트를 생성합니다.
-  const container = Container();
+  Container();
 
   // wrapper 엘리먼트에 제목, 셀렉트 엘리먼트 등을 추가합니다.
   const wrapper = document.getElementById('wrapper');
-  createElement(wrapper, 'div', {
-    id: 'cart-total',
-    className: BASE_STYLES.CART_TOTAL,
-  });
+
+  renderCartTotal();
+
   createElement(wrapper, 'select', {
     id: 'product-select',
     className: BASE_STYLES.PRODUCT_SELECT,
