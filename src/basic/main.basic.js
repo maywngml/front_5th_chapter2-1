@@ -230,6 +230,37 @@ const updateStockInfo = () => {
   stockInfo.textContent = infoMsg;
 };
 
+// 장바구니에 추가되어 있는 상품의 수량을 증가시키는 함수입니다.
+const increaseProductInCart = (productElement, selectedProduct) => {
+  const newQuantity =
+    parseInt(productElement.querySelector('span').textContent.split('x ')[1]) +
+    1;
+
+  // 장바구니에 입력될 수량이 현재 상품의 재고보다 적을 때는 수량을 추가합니다.
+  if (newQuantity <= selectedProduct.quantity) {
+    productElement.querySelector('span').textContent =
+      `${selectedProduct.name} - ${selectedProduct.price}원 x ${newQuantity}`;
+    selectedProduct.quantity--;
+  } else {
+    // 수량이 현재 상품 재고보다 크다면 알림창을 표시합니다.
+    alert('재고가 부족합니다.');
+  }
+};
+
+// 장바구니에 상품을 새로 추가합니다.
+const addProductInCart = (cartItems, product) => {
+  const innerHTML = `<span> ${product.name} - ${product.price}원 x 1</span><div><button class="quantity-change bg-blue-500 text-white px-2 py-1 rounded mr-1" data-product-id="${product.id}" data-change="-1">-</button><button class="quantity-change bg-blue-500 text-white px-2 py-1 rounded mr-1" data-product-id="${product.id}" data-change="1">+</button><button class="remove-item bg-red-500 text-white px-2 py-1 rounded" data-product-id="${product.id}">삭제</button></div>`;
+
+  createElement(cartItems, 'div', {
+    id: product.id,
+    className: BASE_STYLES.PRODUCT_IN_CART,
+    innerHTML,
+  });
+
+  product.quantity--;
+};
+
+// 장바구니 상품 추가 버튼 클릭 시 실행되는 핸들러 함수입니다.
 const handleClickAddToCart = () => {
   // 계산에 필요한 엘리먼트 취득
   const cartItems = document.getElementById('cart-items');
@@ -244,41 +275,22 @@ const handleClickAddToCart = () => {
   // 선택된 상품의 재고가 없다면 리턴합니다.
   if (selectedProduct?.quantity <= 0) return;
 
-  const product = document.getElementById(selectedProduct.id);
+  const productElement = document.getElementById(selectedProduct.id);
 
   // 이미 장바구니에 상품이 추가된 상태라면 재고 현황에 따라 수량을 추가하거나 알림창을 표시합니다.
-  if (product) {
-    const newQuantity =
-      parseInt(product.querySelector('span').textContent.split('x ')[1]) + 1;
-
-    // 장바구니에 입력될 수량이 현재 상품의 재고보다 적을 때는 수량을 추가합니다.
-    if (newQuantity <= selectedProduct.quantity) {
-      product.querySelector('span').textContent =
-        `${selectedProduct.name} - ${selectedProduct.price}원 x ${newQuantity}`;
-      selectedProduct.quantity--;
-    } else {
-      // 수량이 현재 상품 재고보다 크다면 알림창을 표시합니다.
-      alert('재고가 부족합니다.');
-    }
+  if (productElement) {
+    increaseProductInCart(productElement, selectedProduct);
   } else {
-    // TODO: innerHTML 반환하는 함수 생성
-    // 상품이 추가되어 있지 않다면 새로 추가합니다.
-    const innerHTML = `<span> ${selectedProduct.name} - ${selectedProduct.price}원 x 1</span><div><button class="quantity-change bg-blue-500 text-white px-2 py-1 rounded mr-1" data-product-id="${selectedProduct.id}" data-change="-1">-</button><button class="quantity-change bg-blue-500 text-white px-2 py-1 rounded mr-1" data-product-id="${selectedProduct.id}" data-change="1">+</button><button class="remove-item bg-red-500 text-white px-2 py-1 rounded" data-product-id="${selectedProduct.id}">삭제</button></div>`;
-
-    createElement(cartItems, 'div', {
-      id: selectedProduct.id,
-      className: BASE_STYLES.PRODUCT_IN_CART,
-      innerHTML,
-    });
-
-    selectedProduct.quantity--;
+    // 상품이 추가되어 있지 않다면 장바구니에 선택한 상품을 새로 추가합니다.
+    addProductInCart(cartItems, selectedProduct);
   }
 
   updateCart();
   lastSelectedProductId = selectedProductId;
 };
 
-const changeProductQuantity = (change, element, product) => {
+// 장바구니 내 상품 수량을 수정하는 함수입니다.
+const changeProductQuantityInCart = (change, element, product) => {
   const changeQuantity = parseInt(change);
   let textContent = element.querySelector('span').textContent;
   const newQuantity = parseInt(textContent.split('x ')[1]) + changeQuantity;
@@ -300,7 +312,8 @@ const changeProductQuantity = (change, element, product) => {
   }
 };
 
-const removeProductFromCart = (element, product) => {
+// 장바구니에서 상품을 제거하는 함수입니다.
+const removeProductInCart = (element, product) => {
   const removeQuantity = parseInt(
     element.querySelector('span').textContent.split('x ')[1],
   );
@@ -308,6 +321,7 @@ const removeProductFromCart = (element, product) => {
   element.remove();
 };
 
+// 장바구니 내 상품 영역을 클릭했을 때 실행되는 핸들러 함수입니다.
 const handleClickCartItems = (event) => {
   const target = event.target;
   if (
@@ -319,9 +333,13 @@ const handleClickCartItems = (event) => {
     const product = products.find((product) => product.id === productId);
 
     if (target.classList.contains('quantity-change')) {
-      changeProductQuantity(target.dataset.change, productElement, product);
+      changeProductQuantityInCart(
+        target.dataset.change,
+        productElement,
+        product,
+      );
     } else if (target.classList.contains('remove-item')) {
-      removeProductFromCart(productElement, product);
+      removeProductInCart(productElement, product);
     }
 
     updateCart();
@@ -332,8 +350,8 @@ const main = () => {
   renderElement();
   updateSelectOptions();
   updateCart();
-  notifyLuckySale();
-  notifyPurchaseSuggestion();
+  // notifyLuckySale();
+  // notifyPurchaseSuggestion();
 };
 
 main();
