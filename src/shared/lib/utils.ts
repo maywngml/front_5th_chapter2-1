@@ -12,4 +12,6 @@ export const createElement = <T>(
   }
 
   root.appendChild(element);
+
+  return element;
 };
