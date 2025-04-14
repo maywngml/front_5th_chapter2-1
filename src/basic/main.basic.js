@@ -83,14 +83,6 @@ const notifyPurchaseSuggestion = () => {
   }, 60000);
 };
 
-const main = () => {
-  renderElement();
-  updateSelectOptions();
-  updateCart();
-  notifyLuckySale();
-  notifyPurchaseSuggestion();
-};
-
 // 상품 선택 옵션을 업데이트합니다.
 const updateSelectOptions = (productId) => {
   const select = document.getElementById('product-select');
@@ -210,12 +202,11 @@ const updateCart = () => {
 const renderBonusPoints = (totalAmount) => {
   const cartTotal = document.getElementById('cart-total');
   const bonusPoints = Math.floor(totalAmount / 1000);
-  // TODO: loyalty-points -> bonus-points로 변경
-  let pointsTag = document.getElementById('loyalty-points');
+  let pointsTag = document.getElementById('bonus-points');
 
   if (!pointsTag) {
     pointsTag = createElement(cartTotal, 'span', {
-      id: 'loyalty-points',
+      id: 'bonus-points',
       className: BASE_STYLES.LOYALTY_POINTS,
     });
   }
@@ -335,6 +326,14 @@ const handleClickCartItems = (event) => {
 
     updateCart();
   }
+};
+
+const main = () => {
+  renderElement();
+  updateSelectOptions();
+  updateCart();
+  notifyLuckySale();
+  notifyPurchaseSuggestion();
 };
 
 main();
