@@ -7,16 +7,18 @@ let lastSelectedProductId;
 
 // 화면에 돔을 그리는 함수입니다.
 const renderElement = () => {
-  // 루트 노드에 컨테이너 노드를 추가합니다.
+  // 루트 엘리먼트에 컨테이너 엘리먼트를 추가합니다.
   const root = document.getElementById('app');
   createElement(root, 'div', { id: 'container' });
 
+  // 컨테이너 엘리먼트에 wrapper 엘리먼트를 추가합니다.
   const container = document.getElementById('container');
   createElement(container, 'div', {
     id: 'wrapper',
     className: BASE_STYLES.WRAPPER,
   });
 
+  // wrapper 엘리먼트에 제목, 셀렉트 엘리먼트 등을 추가합니다.
   const wrapper = document.getElementById('wrapper');
   createElement(wrapper, 'h1', {
     className: BASE_STYLES.TITLE,
@@ -54,7 +56,7 @@ const notifyLuckySale = () => {
       luckyItem.price = Math.round(luckyItem.price * 0.8);
 
       alert(`번개세일! ${luckyItem.name}이(가) 20% 할인 중입니다!`);
-      updateSelectOptions();
+      updateSelectOptions(luckyItem.id);
     }
   }, 30000);
 };
@@ -76,7 +78,7 @@ const notifyPurchaseSuggestion = () => {
       alert(
         `${suggestedProduct.name}은(는) 어떠세요? 지금 구매하시면 5% 추가 할인!`,
       );
-      updateSelectOptions();
+      updateSelectOptions(suggestedProduct.id);
     }
   }, 60000);
 };
@@ -90,20 +92,31 @@ const main = () => {
 };
 
 // 상품 선택 옵션을 업데이트합니다.
-const updateSelectOptions = () => {
+const updateSelectOptions = (productId) => {
   const select = document.getElementById('product-select');
-  select.innerHTML = '';
 
-  products.forEach((product) => {
-    const option = document.createElement('option');
-    option.value = product.id;
+  // productId가 빈 값이 아니라면 해당 상품의 옵션만 변경합니다.
+  if (productId) {
+    const product = products.find((product) => product.id === productId);
+    const option = document.querySelector(
+      `#product-select #product-select-option-${productId}`,
+    );
+
     option.textContent = `${product.name} - ${product.price}원`;
+    option.disabled = !!(product.quantity === 0);
+  } else {
+    // productId가 빈 값이라면 전체 상품 옵션을 새로 설정합니다.
+    select.innerHTML = '';
 
-    if (product.quantity === 0) {
-      option.disabled = true;
-    }
-    select.appendChild(option);
-  });
+    products.forEach((product) => {
+      createElement(select, 'option', {
+        id: `product-select-option-${product.id}`,
+        value: product.id,
+        textContent: `${product.name} - ${product.price}원`,
+        disabled: !!(product.quantity === 0),
+      });
+    });
+  }
 };
 
 // 현재 장바구니 속 아이템의 총 개수와 조건에 따라 할인율을 계산해 반환합니다.
