@@ -1,5 +1,8 @@
 import { createElement } from '../shared/lib/utils';
 import { products } from '../shared/config/product';
+import { BASE_STYLES } from '../shared/styles/base';
+
+let lastSel;
 
 // 화면에 돔을 그리는 함수입니다.
 function renderElement() {
@@ -9,43 +12,39 @@ function renderElement() {
   const container = document.getElementById('container');
   createElement(container, 'div', {
     id: 'wrapper',
-    className:
-      'max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl p-8',
+    className: BASE_STYLES.WRAPPER,
   });
 
   const wrapper = document.getElementById('wrapper');
   createElement(wrapper, 'h1', {
-    className: 'text-2xl font-bold mb-4',
+    className: BASE_STYLES.TITLE,
     textContent: '장바구니',
   });
   createElement(wrapper, 'div', { id: 'cart-items' });
   createElement(wrapper, 'div', {
     id: 'cart-total',
-    className: 'text-xl font-bold my-4',
+    className: BASE_STYLES.CART_TOTAL,
   });
   createElement(wrapper, 'select', {
     id: 'product-select',
-    className: 'border rounded p-2 mr-2',
+    className: BASE_STYLES.PRODUCT_SELECT,
   });
   createElement(wrapper, 'button', {
     id: 'add-to-cart',
-    className: 'bg-blue-500 text-white px-4 py-2 rounded',
+    className: BASE_STYLES.ADD_TO_CART,
     textContent: '추가',
   });
   createElement(wrapper, 'div', {
     id: 'stock-status',
-    className: 'text-sm text-gray-500 mt-2',
+    className: BASE_STYLES.STOCK_STATUS,
   });
 }
 
 function main() {
-  var lastSel;
-
   renderElement();
-
   updateSelectOptions();
-
   updateCart();
+  // TODO: 함수로 분리
   setTimeout(function () {
     // 타임 세일 팝업 임시로 막아놓음
     // setInterval(function () {
@@ -158,7 +157,7 @@ function renderTotalPrice(totalDiscountedPrice, discountRate) {
   if (discountRate > 0) {
     const span = document.createElement('span');
 
-    span.className = 'text-green-500 ml-2';
+    span.className = BASE_STYLES.CART_TOTAL;
     span.textContent = `(${(discountRate * 100).toFixed(1)}% 할인 적용)`;
 
     cartTotal.appendChild(span);
@@ -183,12 +182,13 @@ function updateCart() {
 const renderBonusPoints = (totalAmount) => {
   const cartTotal = document.getElementById('cart-total');
   const bonusPoints = Math.floor(totalAmount / 1000);
+  // TODO: loyalty-points -> bonus-points로 변경
   let pointsTag = document.getElementById('loyalty-points');
 
   if (!pointsTag) {
     pointsTag = document.createElement('span');
     pointsTag.id = 'loyalty-points';
-    pointsTag.className = 'text-blue-500 ml-2';
+    pointsTag.className = BASE_STYLES.LOYALTY_POINTS;
     cartTotal.appendChild(pointsTag);
   }
 
@@ -210,8 +210,6 @@ function updateStockInfo() {
 
   stockInfo.textContent = infoMsg;
 }
-
-main();
 
 function handleClickAddToCart() {
   // 계산에 필요한 엘리먼트 취득
@@ -249,7 +247,7 @@ function handleClickAddToCart() {
 
     createElement(cartItems, 'div', {
       id: selectedProduct.id,
-      className: 'flex justify-between items-center mb-2',
+      className: BASE_STYLES.PRODUCT_IN_CART,
       innerHTML,
     });
 
@@ -309,6 +307,8 @@ function handleClickCartItems(event) {
     updateCart();
   }
 }
+
+main();
 
 document
   .getElementById('add-to-cart')
