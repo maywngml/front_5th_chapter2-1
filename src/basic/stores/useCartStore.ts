@@ -9,10 +9,10 @@ interface CartState {
   items: Item[];
   totalPrice: number;
 }
-
+// TODO: 총액 업데이트 액션 추가하기
 // 장바구니 상태를 업데이트하는 액션의 타입을 정의합니다.
 type CartAction = {
-  addToCart: (state: CartState, newItem: Item) => CartState;
+  addToCart: (state: CartState, newItem: Omit<Item, 'quantity'>) => CartState;
   deleteFromCart: (state: CartState, id: string) => CartState;
 };
 
@@ -26,22 +26,24 @@ export const cartStore = createStore<CartState, CartAction>(
     // 아이템을 장바구니에 추가합니다.
     addToCart(state, newItem) {
       const currentItem = state.items.find((item) => item.id === newItem.id);
-      let newItems;
+      let newItems, newQuantity;
 
       // 아이템이 장바구니에 담겨 있다면 수량을 업데이트합니다.
       if (currentItem) {
         newItems = state.items.map((item) =>
           item.id === newItem.id
-            ? { ...item, quantity: newItem.quantity }
+            ? { ...item, quantity: item.quantity + 1 }
             : item,
         );
+        newQuantity = currentItem.quantity + 1;
       } else {
         // 추가하려는 아이템이 장바구니에 없다면 아이템을 새로 추가
-        newItems = [...state.items, { ...newItem }];
+        newItems = [...state.items, { ...newItem, quantity: 1 }];
+        newQuantity = 1;
       }
 
       // 총액을 새로 계산합니다.
-      const newTotalPrice = state.totalPrice + newItem.price * newItem.quantity;
+      const newTotalPrice = state.totalPrice + newItem.price * newQuantity;
 
       return { items: newItems, totalPrice: newTotalPrice };
     },
