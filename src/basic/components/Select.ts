@@ -1,4 +1,4 @@
-interface Option extends HTMLOptionElement {
+interface Option {
   id: string;
   value: string;
   content: string;
