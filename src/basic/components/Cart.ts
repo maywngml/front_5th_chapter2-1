@@ -1,11 +1,19 @@
+import CartItems from './CartItems';
+
 export default function Cart() {
-  return /* HTML */ `
-    <div
-      id="wrapper"
-      class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl p-8"
-    >
+  const wrapper = document.createElement('div');
+  wrapper.id = 'wrapper';
+  wrapper.className =
+    'max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl p-8';
+
+  const render = () => {
+    wrapper.innerHTML = /* HTML */ `
       <h1 class="text-2xl font-bold mb-4">장바구니</h1>
-      <div id="cart-items"></div>
-    </div>
-  `;
+    `;
+    wrapper.appendChild(CartItems());
+  };
+
+  render();
+
+  return wrapper;
 }
