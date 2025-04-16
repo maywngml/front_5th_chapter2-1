@@ -13,7 +13,7 @@ type ProductsAction = {
   ) => ProductsState;
 };
 
-const productsStore = createStore<ProductsState, ProductsAction>(
+export const productsStore = createStore<ProductsState, ProductsAction>(
   {
     products: [
       {
@@ -67,6 +67,6 @@ const productsStore = createStore<ProductsState, ProductsAction>(
   },
 );
 
-export default function useProductsStore() {
+export function useProductsStore() {
   return { ...productsStore.getState(), ...productsStore.actions };
 }
