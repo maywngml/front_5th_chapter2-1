@@ -17,7 +17,7 @@ export default function ProductSelect() {
   // 장바구니 상품 추가 버튼 클릭 시 실행되는 핸들러 함수입니다.
   const handleClick = () => {
     const { products, updateProducts } = useProductsStore();
-    const { items, addToCart } = useCartStore();
+    const { items, increaseCartItem } = useCartStore();
 
     // 옵션에서 선택한 상품의 id
     const selectedProductId = (
@@ -38,7 +38,7 @@ export default function ProductSelect() {
       alert('재고가 부족합니다.');
     } else {
       // 재고가 넉넉하다면 장바구니에 상품을 추가합니다.
-      addToCart({
+      increaseCartItem({
         id: selectedProduct.id,
         name: selectedProduct.name,
         price: selectedProduct.price,

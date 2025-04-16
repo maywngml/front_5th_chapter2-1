@@ -11,7 +11,10 @@ interface CartState {
 // TODO: 총액 업데이트 액션 추가하기
 // 장바구니 상태를 업데이트하는 액션의 타입을 정의합니다.
 type CartAction = {
-  addToCart: (state: CartState, newItem: Omit<Item, 'quantity'>) => CartState;
+  increaseCartItem: (
+    state: CartState,
+    newItem: Omit<Item, 'quantity'>,
+  ) => CartState;
   deleteFromCart: (state: CartState, id: string) => CartState;
 };
 
@@ -22,7 +25,7 @@ export const cartStore = createStore<CartState, CartAction>(
   },
   {
     // 아이템을 장바구니에 추가합니다.
-    addToCart(state, newItem) {
+    increaseCartItem(state, newItem) {
       const currentItem = state.items.find((item) => item.id === newItem.id);
       let newItems;
 
