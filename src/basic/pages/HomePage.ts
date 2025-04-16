@@ -1,4 +1,5 @@
 import { Cart } from '@/basic/components';
+import { setupEventListeners } from '../lib/event';
 
 export default function HomePage() {
   const render = () => {
@@ -8,6 +9,7 @@ export default function HomePage() {
 
     container.appendChild(Cart());
     app.appendChild(container);
+    setupEventListeners(app);
   };
 
   render();
