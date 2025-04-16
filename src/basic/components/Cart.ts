@@ -1,4 +1,5 @@
 import CartItems from './CartItems';
+import ProductSelect from './ProductSelect';
 
 export default function Cart() {
   const wrapper = document.createElement('div');
@@ -11,6 +12,7 @@ export default function Cart() {
       <h1 class="text-2xl font-bold mb-4">장바구니</h1>
     `;
     wrapper.appendChild(CartItems());
+    wrapper.appendChild(ProductSelect());
   };
 
   render();

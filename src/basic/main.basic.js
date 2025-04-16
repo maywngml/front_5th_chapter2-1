@@ -1,7 +1,7 @@
 import { createElement } from '../shared/lib/utils';
 import { products } from '../shared/config/product';
 import { BASE_STYLES } from '../shared/styles/base';
-import { renderCartTotal, renderProductSelect } from '../features/cart/ui';
+import { renderCartTotal } from '../features/cart/ui';
 import { HomePage } from './pages';
 
 // TODO: 파일 분리
@@ -16,13 +16,7 @@ const renderElement = () => {
   const wrapper = document.getElementById('wrapper');
 
   renderCartTotal();
-  renderProductSelect();
 
-  createElement(wrapper, 'button', {
-    id: 'add-to-cart',
-    className: BASE_STYLES.ADD_TO_CART,
-    textContent: '추가',
-  });
   createElement(wrapper, 'div', {
     id: 'stock-status',
     className: BASE_STYLES.STOCK_STATUS,
@@ -215,65 +209,6 @@ const updateStockInfo = () => {
   stockInfo.textContent = infoMsg;
 };
 
-// 장바구니에 추가되어 있는 상품의 수량을 증가시키는 함수입니다.
-const increaseProductInCart = (productElement, selectedProduct) => {
-  const newQuantity =
-    parseInt(productElement.querySelector('span').textContent.split('x ')[1]) +
-    1;
-
-  // 장바구니에 입력될 수량이 현재 상품의 재고보다 적을 때는 수량을 추가합니다.
-  if (newQuantity <= selectedProduct.quantity) {
-    productElement.querySelector('span').textContent =
-      `${selectedProduct.name} - ${selectedProduct.price}원 x ${newQuantity}`;
-    selectedProduct.quantity--;
-  } else {
-    // 수량이 현재 상품 재고보다 크다면 알림창을 표시합니다.
-    alert('재고가 부족합니다.');
-  }
-};
-
-// 장바구니에 상품을 새로 추가합니다.
-const addProductInCart = (cartItems, product) => {
-  const innerHTML = `<span> ${product.name} - ${product.price}원 x 1</span><div><button class="quantity-change bg-blue-500 text-white px-2 py-1 rounded mr-1" data-product-id="${product.id}" data-change="-1">-</button><button class="quantity-change bg-blue-500 text-white px-2 py-1 rounded mr-1" data-product-id="${product.id}" data-change="1">+</button><button class="remove-item bg-red-500 text-white px-2 py-1 rounded" data-product-id="${product.id}">삭제</button></div>`;
-
-  createElement(cartItems, 'div', {
-    id: product.id,
-    className: BASE_STYLES.PRODUCT_IN_CART,
-    innerHTML,
-  });
-
-  product.quantity--;
-};
-
-// 장바구니 상품 추가 버튼 클릭 시 실행되는 핸들러 함수입니다.
-const handleClickAddToCart = () => {
-  // 계산에 필요한 엘리먼트 취득
-  const cartItems = document.getElementById('cart-items');
-  const productSelect = document.getElementById('product-select');
-
-  // 선택한 상품의 아이디와 정보를 가져옵니다.
-  const selectedProductId = productSelect.value;
-  const selectedProduct = products.find(
-    (product) => product.id === selectedProductId,
-  );
-
-  // 선택된 상품의 재고가 없다면 리턴합니다.
-  if (selectedProduct?.quantity <= 0) return;
-
-  const productElement = document.getElementById(selectedProduct.id);
-
-  // 이미 장바구니에 상품이 추가된 상태라면 재고 현황에 따라 수량을 추가하거나 알림창을 표시합니다.
-  if (productElement) {
-    increaseProductInCart(productElement, selectedProduct);
-  } else {
-    // 상품이 추가되어 있지 않다면 장바구니에 선택한 상품을 새로 추가합니다.
-    addProductInCart(cartItems, selectedProduct);
-  }
-
-  updateCart();
-  lastSelectedProductId = selectedProductId;
-};
-
 // 장바구니 내 상품 수량을 수정하는 함수입니다.
 const changeProductQuantityInCart = (change, element, product) => {
   const changeQuantity = parseInt(change);
@@ -340,10 +275,6 @@ const main = () => {
 };
 
 main();
-
-document
-  .getElementById('add-to-cart')
-  .addEventListener('click', handleClickAddToCart);
 
 document
   .getElementById('cart-items')
