@@ -13,7 +13,7 @@ type ProductsAction = {
   ) => ProductsState;
 };
 
-export const productsStore = createStore<ProductsState, ProductsAction>(
+const productsStore = createStore<ProductsState, ProductsAction>(
   {
     products: [
       {
@@ -70,6 +70,3 @@ export const productsStore = createStore<ProductsState, ProductsAction>(
 export const useProductsStore = () => {
   return { ...productsStore.getState(), ...productsStore.actions };
 };
-
-const { products, updateProducts } = useProductsStore();
-const { updateProducts } = productsStore.actions;
