@@ -7,7 +7,6 @@ type Item = Omit<Product, 'discountRate'>;
 // 장바구니 상태 타입입니다. 아이템 목록과 총 금액을 포함합니다.
 interface CartState {
   items: Item[];
-  totalPrice: number;
 }
 // TODO: 총액 업데이트 액션 추가하기
 // 장바구니 상태를 업데이트하는 액션의 타입을 정의합니다.
@@ -20,13 +19,12 @@ type CartAction = {
 export const cartStore = createStore<CartState, CartAction>(
   {
     items: [],
-    totalPrice: 0,
   },
   {
     // 아이템을 장바구니에 추가합니다.
     addToCart(state, newItem) {
       const currentItem = state.items.find((item) => item.id === newItem.id);
-      let newItems, newQuantity;
+      let newItems;
 
       // 아이템이 장바구니에 담겨 있다면 수량을 업데이트합니다.
       if (currentItem) {
@@ -35,17 +33,12 @@ export const cartStore = createStore<CartState, CartAction>(
             ? { ...item, quantity: item.quantity + 1 }
             : item,
         );
-        newQuantity = currentItem.quantity + 1;
       } else {
         // 추가하려는 아이템이 장바구니에 없다면 아이템을 새로 추가
         newItems = [...state.items, { ...newItem, quantity: 1 }];
-        newQuantity = 1;
       }
 
-      // 총액을 새로 계산합니다.
-      const newTotalPrice = state.totalPrice + newItem.price * newQuantity;
-
-      return { items: newItems, totalPrice: newTotalPrice };
+      return { items: newItems };
     },
 
     // 아이템을 장바구니에서 제거합니다.
@@ -59,11 +52,10 @@ export const cartStore = createStore<CartState, CartAction>(
         return { ...state };
       }
 
-      // 아이템이 장바구니에 담겨있다면 아이템 목록에서 해당 아이템을 제외하고 총액을 다시 계산합니다.
+      // 아이템 목록에서 해당 아이템을 제외합니다.
       const newItems = state.items.filter((item) => item.id === id);
-      const newTotalPrice = state.totalPrice - item.price * item.quantity;
 
-      return { items: newItems, totalPrice: newTotalPrice };
+      return { items: newItems };
     },
   },
 );
