@@ -1,7 +1,6 @@
 import { createElement } from '../shared/lib/utils';
 import { products } from '../shared/config/product';
 import { BASE_STYLES } from '../shared/styles/base';
-import { renderCartTotal } from '../features/cart/ui';
 import { HomePage } from './pages';
 
 // TODO: 파일 분리
@@ -14,8 +13,6 @@ const renderElement = () => {
 
   // wrapper 엘리먼트에 제목, 셀렉트 엘리먼트 등을 추가합니다.
   const wrapper = document.getElementById('wrapper');
-
-  renderCartTotal();
 
   createElement(wrapper, 'div', {
     id: 'stock-status',
