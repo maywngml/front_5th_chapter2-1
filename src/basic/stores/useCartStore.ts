@@ -69,6 +69,6 @@ const cartStore = createStore<CartState, CartAction>(
 );
 
 // 장바구니 상태와 액션을 외부에서 간편하게 사용할 수 있도록 반환하는 훅입니다.
-export const useCartStore = () => {
+export default function useCartStore() {
   return { ...cartStore.getState(), ...cartStore.actions };
-};
+}

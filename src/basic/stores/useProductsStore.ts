@@ -67,6 +67,6 @@ const productsStore = createStore<ProductsState, ProductsAction>(
   },
 );
 
-export const useProductsStore = () => {
+export default function useProductsStore() {
   return { ...productsStore.getState(), ...productsStore.actions };
-};
+}
