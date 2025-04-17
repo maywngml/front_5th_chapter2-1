@@ -2,6 +2,7 @@ interface Option {
   id: string;
   value: string;
   content: string;
+  disabled: boolean;
 }
 
 interface SelectProps {
@@ -19,8 +20,8 @@ export default function Select({ id, className, options }: SelectProps) {
     select.innerHTML = /* HTML */ `
       ${options
         .map(
-          ({ id, value, content }: Option) =>
-            `<option id=${id} value=${value}>${content}</option>`,
+          ({ id, value, content, disabled }: Option) =>
+            `<option id=${id} value=${value} ${disabled && 'disabled'}>${content}</option>`,
         )
         .join('')}
     `;

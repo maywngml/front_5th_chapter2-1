@@ -5,8 +5,10 @@ import type { Item } from '../stores';
 import type { Product } from '../types/product';
 
 export default function ProductSelect() {
+  // DOM에 삽입되지 않는 임시 컨테이너인 DocumentFragment를 생성합니다.
   const fragment = document.createDocumentFragment();
 
+  // 장바구니 추가 버튼을 생성하고 fragment에 추가 합니다.
   const addToCartButton = document.createElement('button');
 
   addToCartButton.id = 'add-to-cart';
@@ -14,6 +16,9 @@ export default function ProductSelect() {
   addToCartButton.textContent = '추가';
 
   fragment.appendChild(addToCartButton);
+
+  // 컴포넌트의 첫 렌더링 여부를 저장하는 변수입니다.
+  let isFirstRender = true;
 
   // 장바구니에 추가되어 있는 상품의 수량을 증가시키는 함수입니다.
   const increaseProductInCart = (item: Item, product: Product) => {
@@ -90,19 +95,36 @@ export default function ProductSelect() {
   const render = () => {
     const { products } = useProductsStore();
 
+    // select 안에 들어갈 상품 옵션을 가공합니다.
     const options = products.map((product: Product) => ({
       id: `product-select-option-${product.id}`,
       value: product.id,
-      content: product.name,
+      content: `${product.name} - ${product.price}원`,
+      disabled: !!(product.quantity === 0),
     }));
 
-    fragment.prepend(
-      Select({
-        id: 'product-select',
-        className: 'border rounded p-2 mr-2',
-        options,
-      }),
-    );
+    // 컴포넌트가 처음 렌더링되는 거라면 fragment에 Select 컴포넌트를 붙여줍니다.
+    if (isFirstRender) {
+      fragment.prepend(
+        Select({
+          id: 'product-select',
+          className: 'border rounded p-2 mr-2',
+          options,
+        }),
+      );
+
+      isFirstRender = false;
+    } else {
+      // 컴포넌트가 처음 렌더링되는 것이 아니라면 렌더링 되어 있는 option을 변경합니다.
+      products.forEach((product) => {
+        const option = document.getElementById(
+          `product-select-option-${product.id}`,
+        );
+        if (option) {
+          option.textContent = `${product.name} - ${product.price}원`;
+        }
+      });
+    }
   };
 
   productsStore.subscribe(render);
