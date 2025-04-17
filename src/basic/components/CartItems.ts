@@ -69,6 +69,8 @@ export default function CartItems() {
         changeProductQuantityInCart(changeQuantity, item, product);
       } else if (target.classList.contains('remove-item')) {
         // 상품 제거 버튼을 클릭했을 때 장바구니에서 상품을 제거하고 재고 수량을 변경합니다.
+        const itemElement = document.getElementById(productId);
+        itemElement?.remove();
         deleteFromCart(productId);
         updateProducts(productId, {
           quantity: product.quantity + item.quantity,
@@ -82,17 +84,23 @@ export default function CartItems() {
   const render = () => {
     const { items } = useCartStore();
 
-    cartItems.innerHTML = /* HTML */ `
-      ${items
-        .map(
-          (
-            item,
-          ) => `<div id=${item.id} class="flex justify-between items-center mb-2">
-        <span> ${item.name} - ${item.price}원 x ${item.quantity}</span><div><button class="quantity-change bg-blue-500 text-white px-2 py-1 rounded mr-1" data-product-id="${item.id}" data-change="-1">-</button><button class="quantity-change bg-blue-500 text-white px-2 py-1 rounded mr-1" data-product-id="${item.id}" data-change="1">+</button><button class="remove-item bg-red-500 text-white px-2 py-1 rounded" data-product-id="${item.id}">삭제</button></div>
-        </div>`,
-        )
-        .join('')}
-    `;
+    items.forEach((item) => {
+      let itemElement = document.getElementById(item.id);
+
+      if (itemElement) {
+        const itemInformation = document.querySelector(`#${item.id} span`);
+        if (itemInformation) {
+          itemInformation.textContent = `${item.name} - ${item.price}원 x ${item.quantity}`;
+        }
+      } else {
+        itemElement = document.createElement('div');
+        itemElement.id = item.id;
+        itemElement.className = 'flex justify-between items-center mb-2';
+        itemElement.innerHTML = `<span> ${item.name} - ${item.price}원 x ${item.quantity}</span><div><button class="quantity-change bg-blue-500 text-white px-2 py-1 rounded mr-1" data-product-id="${item.id}" data-change="-1">-</button><button class="quantity-change bg-blue-500 text-white px-2 py-1 rounded mr-1" data-product-id="${item.id}" data-change="1">+</button><button class="remove-item bg-red-500 text-white px-2 py-1 rounded" data-product-id="${item.id}">삭제</button></div>`;
+
+        cartItems.appendChild(itemElement);
+      }
+    });
   };
 
   cartStore.subscribe(render);
