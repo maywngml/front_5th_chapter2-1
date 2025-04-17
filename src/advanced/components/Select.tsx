@@ -1,3 +1,5 @@
+import { Ref } from 'react';
+
 interface Option {
   id: string;
   value: string;
@@ -9,14 +11,20 @@ interface SelectProps {
   id: string;
   className: string;
   options: Option[];
+  ref: Ref<HTMLSelectElement>;
 }
 
-export default function Select({ id, className, options }: SelectProps) {
+export default function Select({ id, className, options, ref }: SelectProps) {
   return (
-    <select id={id} className={className}>
+    <select id={id} className={className} ref={ref}>
       {options.map(({ id, value, content, disabled = false }: Option) => (
-        <option id={id} value={value} disabled={disabled}>
-          ${content}
+        <option
+          id={id}
+          value={value}
+          disabled={disabled}
+          key={`product-option-${id}`}
+        >
+          {content}
         </option>
       ))}
     </select>
