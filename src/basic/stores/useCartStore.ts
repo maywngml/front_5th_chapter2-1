@@ -2,7 +2,7 @@ import { createStore } from './createStore';
 import { Product } from '../types/product';
 
 // 장바구니에 담길 아이템 타입입니다.
-type Item = Omit<Product, 'discountRate'>;
+export type Item = Omit<Product, 'discountRate'>;
 
 // 장바구니 상태 타입입니다. 아이템 목록과 총 금액을 포함합니다.
 interface CartState {
@@ -15,6 +15,7 @@ type CartAction = {
     state: CartState,
     newItem: Omit<Item, 'quantity'>,
   ) => CartState;
+  decreaseCartItem: (state: CartState, id: string) => CartState;
   deleteFromCart: (state: CartState, id: string) => CartState;
 };
 
@@ -24,12 +25,12 @@ export const cartStore = createStore<CartState, CartAction>(
     items: [],
   },
   {
-    // 아이템을 장바구니에 추가합니다.
+    // 아이템을 장바구니에 추가하거나 수량을 증가시킵니다.
     increaseCartItem(state, newItem) {
       const currentItem = state.items.find((item) => item.id === newItem.id);
       let newItems;
 
-      // 아이템이 장바구니에 담겨 있다면 수량을 업데이트합니다.
+      // 아이템이 장바구니에 담겨 있다면 수량을 증가시킵니다.
       if (currentItem) {
         newItems = state.items.map((item) =>
           item.id === newItem.id
@@ -37,8 +38,28 @@ export const cartStore = createStore<CartState, CartAction>(
             : item,
         );
       } else {
-        // 추가하려는 아이템이 장바구니에 없다면 아이템을 새로 추가
+        // 추가하려는 아이템이 장바구니에 없다면 아이템을 새로 추가합니다.
         newItems = [...state.items, { ...newItem, quantity: 1 }];
+      }
+
+      return { items: newItems };
+    },
+    // 장바구니 속 아이템 수량을 감소시킵니다.
+    decreaseCartItem(state, id) {
+      const item = state.items.find((item) => item.id === id);
+      let newItems;
+
+      if (!item) {
+        alert('아이템의 수량을 줄이는데 오류가 발생했습니다.');
+        return { ...state };
+      }
+
+      if (item.quantity > 1) {
+        newItems = state.items.map((item) =>
+          item.id === id ? { ...item, quantity: item.quantity - 1 } : item,
+        );
+      } else {
+        newItems = state.items.filter((item) => item.id !== id);
       }
 
       return { items: newItems };
@@ -51,12 +72,11 @@ export const cartStore = createStore<CartState, CartAction>(
       // 해당 id의 아이템이 장바구니에 없다면 알림창을 띄우고 기존 상태를 반환합니다.
       if (!item) {
         alert('아이템을 장바구니에서 제거하는데 오류가 발생했습니다.');
-
         return { ...state };
       }
 
       // 아이템 목록에서 해당 아이템을 제외합니다.
-      const newItems = state.items.filter((item) => item.id === id);
+      const newItems = state.items.filter((item) => item.id !== id);
 
       return { items: newItems };
     },
