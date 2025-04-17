@@ -28,7 +28,6 @@ export default function CartTotal() {
       const currentTotalPrice = currentItem.price * quantity;
       // 한 상품 10개 이상 구매 시 정해진 할인율 적용
       const currentDiscountRate = quantity >= 10 ? currentItem.discountRate : 0;
-
       totalCount += quantity;
       totalPrice += currentTotalPrice;
       totalDiscountedPrice += currentTotalPrice * (1 - currentDiscountRate);
@@ -66,6 +65,7 @@ export default function CartTotal() {
   };
 
   const render = () => {
+    // 장바구니 내 모든 상품의 총액과 할인율을 계산합니다.
     const { totalPrice, totalCount, totalDiscountedPrice } = calcTotalCart();
     const discountRate = getDiscountRate(
       totalCount,
@@ -73,17 +73,16 @@ export default function CartTotal() {
       totalDiscountedPrice,
     );
 
-    cartTotal.innerHTML = /* HTML */ `
-      총액: ${totalPrice}원
-      ${discountRate > 0
-        ? `<span class="text-green-500 ml-2"
-        >(${(discountRate * 100).toFixed(1)}% 할인 적용)</span
-      >`
-        : ''}
-      <span id="bonus-points" class="text-blue-500 ml-2"
-        >(포인트: ${Math.floor(totalPrice / 1000)})</span
-      >
-    `;
+    // 총액과 할인율, 포인트를 계산해 화면에 표시합니다.
+    cartTotal.innerHTML = `총액: ${totalDiscountedPrice}원${
+      discountRate > 0
+        ? `<span class="text-green-500 ml-2">(${(discountRate * 100).toFixed(
+            1,
+          )}% 할인 적용)</span>`
+        : ''
+    }<span id="bonus-points" class="text-blue-500 ml-2">(포인트: ${Math.floor(
+      totalDiscountedPrice / 1000,
+    )})</span>`;
   };
 
   cartStore.subscribe(render);
