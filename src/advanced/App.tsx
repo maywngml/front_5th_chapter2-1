@@ -1,3 +1,12 @@
+import { CartProvider } from './context/CartContext';
+import { ProductsProvider } from './context/ProductsContext';
+
 export default function App() {
-  return <div id='container'></div>;
+  return (
+    <CartProvider>
+      <ProductsProvider>
+        <div id='container'></div>
+      </ProductsProvider>
+    </CartProvider>
+  );
 }
