@@ -1,18 +1,24 @@
-const eventTypes: string[] = [];
-const elementMap = new Map();
+type EventHandlerMap = Map<string, Map<HTMLElement, (e: Event) => void>>;
+
+const eventHandlers: EventHandlerMap = new Map();
 
 const handleEvent = (e: Event) => {
-  const targetMap = elementMap.get(e.target);
-  const handler = targetMap?.get(e.type);
-  if (handler) {
-    handler.call(e.target, e);
+  const handlers = eventHandlers.get(e.type);
+  if (!handlers) return;
+
+  for (const [selector, handler] of handlers) {
+    const target = e.target as Element;
+    if (selector.contains(target)) {
+      handler(e);
+      break;
+    }
   }
 };
 
 export function setupEventListeners(root: HTMLElement) {
-  eventTypes.forEach((eventType) => {
+  for (const [eventType] of eventHandlers) {
     root.addEventListener(eventType, handleEvent);
-  });
+  }
 }
 
 export function addEvent(
@@ -20,11 +26,12 @@ export function addEvent(
   eventType: string,
   handler: EventListener,
 ) {
-  if (!eventTypes.includes(eventType)) {
-    eventTypes.push(eventType);
+  if (!eventHandlers.has(eventType)) {
+    eventHandlers.set(eventType, new Map());
   }
-  const targetMap = elementMap.get(element) || new Map();
-  if (targetMap.get(eventType) === handler) return;
-  targetMap.set(eventType, handler);
-  elementMap.set(element, targetMap);
+
+  const handlerType = eventHandlers.get(eventType);
+  if (handlerType) {
+    handlerType.set(element, handler);
+  }
 }
