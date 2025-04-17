@@ -3,6 +3,7 @@ import { useProducts } from '../context/ProductsContext';
 import CartItems from './CartItems';
 import CartTotal from './CartTotal';
 import ProductSelect from './ProductSelect';
+import StockStatus from './StockStatus';
 
 const LUCKY_SALE_DISCOUNT_RATE = 0.8;
 const SUGGESTION_SALE_DISCOUNT_RATE = 0.95;
@@ -69,6 +70,7 @@ export default function Cart() {
       <CartItems />
       <CartTotal />
       <ProductSelect />
+      <StockStatus />
     </div>
   );
 }
