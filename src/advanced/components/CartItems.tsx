@@ -65,7 +65,6 @@ export default function CartItems() {
       } else if (target.classList.contains('remove-item')) {
         // 상품 제거 버튼을 클릭했을 때 장바구니에서 상품을 제거하고 재고 수량을 변경합니다.
         const itemElement = document.getElementById(productId);
-        itemElement?.remove();
         deleteFromCart(productId);
         updateProduct(productId, {
           quantity: product.quantity + item.quantity,
@@ -77,9 +76,13 @@ export default function CartItems() {
   return (
     <div id='cart-items' onClick={handleClick}>
       {items.map(({ id, name, price, quantity }) => (
-        <div id={id} className='flex justify-between items-center mb-2'>
+        <div
+          id={id}
+          className='flex justify-between items-center mb-2'
+          key={`item-${id}`}
+        >
           <span>
-            ${name} - ${price}원 x ${quantity}
+            {name} - {price}원 x {quantity}
           </span>
           <div>
             <button
