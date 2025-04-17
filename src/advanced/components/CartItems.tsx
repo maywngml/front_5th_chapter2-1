@@ -64,7 +64,6 @@ export default function CartItems() {
         changeProductQuantityInCart(changeQuantity, item, product);
       } else if (target.classList.contains('remove-item')) {
         // 상품 제거 버튼을 클릭했을 때 장바구니에서 상품을 제거하고 재고 수량을 변경합니다.
-        const itemElement = document.getElementById(productId);
         deleteFromCart(productId);
         updateProduct(productId, {
           quantity: product.quantity + item.quantity,
