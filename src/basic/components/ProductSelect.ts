@@ -23,7 +23,7 @@ export default function ProductSelect() {
   // 장바구니에 추가되어 있는 상품의 수량을 증가시키는 함수입니다.
   const increaseProductInCart = (item: Item, product: Product) => {
     const { increaseCartItem } = useCartStore();
-    const { updateProducts } = useProductsStore();
+    const { updateProduct } = useProductsStore();
     // 장바구니에 입력될 수량이 현재 상품의 재고보다 적을 때는 수량을 추가합니다.
     if (item.quantity + 1 <= product.quantity) {
       increaseCartItem({
@@ -31,7 +31,7 @@ export default function ProductSelect() {
         name: product.name,
         price: product.price,
       });
-      updateProducts(product.id, {
+      updateProduct(product.id, {
         quantity: product.quantity - 1,
       });
     } else {
@@ -42,7 +42,7 @@ export default function ProductSelect() {
 
   // 장바구니 내 상품 수량을 수정하는 함수입니다.
   const addProductInCart = (product: Product) => {
-    const { updateProducts } = useProductsStore();
+    const { updateProduct } = useProductsStore();
     const { increaseCartItem } = useCartStore();
 
     increaseCartItem({
@@ -50,7 +50,7 @@ export default function ProductSelect() {
       name: product.name,
       price: product.price,
     });
-    updateProducts(product.id, {
+    updateProduct(product.id, {
       quantity: product.quantity - 1,
     });
   };

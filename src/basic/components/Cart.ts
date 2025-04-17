@@ -15,7 +15,7 @@ export default function Cart() {
 
   // 랜덤하게 선택된 상품에 대해 세일이 진행 중임을 알립니다.
   const notifyLuckySale = () => {
-    const { products, updateProducts } = useProductsStore();
+    const { products, updateProduct } = useProductsStore();
 
     setInterval(() => {
       // 랜덤으로 세일을 진행할 상품을 선택합니다.
@@ -24,7 +24,7 @@ export default function Cart() {
       // 해당 상품의 재고가 남아있다면 상품 가격의 20%를 할인하고 알림창을 띄웁니다.
       if (luckyItem.quantity > 0) {
         alert(`번개세일! ${luckyItem.name}이(가) 20% 할인 중입니다!`);
-        updateProducts(luckyItem.id, {
+        updateProduct(luckyItem.id, {
           price: Math.round(luckyItem.price * LUCKY_SALE_DISCOUNT_RATE),
         });
       }
@@ -33,7 +33,7 @@ export default function Cart() {
 
   // 재고가 남아있는 상품 중 하나를 선택해 추가 할인을 적용합니다.
   const notifyPurchaseSuggestion = () => {
-    const { products, lastSelectedProductId, updateProducts } =
+    const { products, lastSelectedProductId, updateProduct } =
       useProductsStore();
 
     setInterval(() => {
@@ -54,7 +54,7 @@ export default function Cart() {
         alert(
           `${suggestedProduct.name}은(는) 어떠세요? 지금 구매하시면 5% 추가 할인!`,
         );
-        updateProducts(suggestedProduct.id, {
+        updateProduct(suggestedProduct.id, {
           price: Math.round(
             Math.round(suggestedProduct.price * SUGGESTION_SALE_DISCOUNT_RATE),
           ),

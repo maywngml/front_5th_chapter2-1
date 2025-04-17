@@ -7,7 +7,7 @@ interface ProductsState {
 }
 
 type ProductsAction = {
-  updateProducts: (
+  updateProduct: (
     state: ProductsState,
     id: string,
     options: Partial<Product>,
@@ -60,11 +60,7 @@ export const productsStore = createStore<ProductsState, ProductsAction>(
     lastSelectedProductId: null,
   },
   {
-    updateProducts(
-      state: ProductsState,
-      id: string,
-      options: Partial<Product>,
-    ) {
+    updateProduct(state: ProductsState, id: string, options: Partial<Product>) {
       const newProducts = state.products.map((product) =>
         product.id === id ? { ...product, ...options } : product,
       );

@@ -13,7 +13,7 @@ export default function CartItems() {
     item: Item,
     product: Product,
   ) => {
-    const { updateProducts } = useProductsStore();
+    const { updateProduct } = useProductsStore();
     const { increaseCartItem, decreaseCartItem, deleteFromCart } =
       useCartStore();
 
@@ -23,7 +23,7 @@ export default function CartItems() {
     // 변경될 수량이 0과 같거나 작다면 장바구니에서 해당 상품을 제거하고 재고를 업데이트합니다.
     if (newQuantity <= 0) {
       deleteFromCart(product.id);
-      updateProducts(product.id, {
+      updateProduct(product.id, {
         quantity: product.quantity - change,
       });
     } else if (change <= product.quantity) {
@@ -38,7 +38,7 @@ export default function CartItems() {
         decreaseCartItem(productId);
       }
       // 상품의 재고 수량을 변경합니다.
-      updateProducts(productId, { quantity: product.quantity - change });
+      updateProduct(productId, { quantity: product.quantity - change });
     } else {
       // 재고가 부족하다면 알림창을 표시합니다.
       alert('재고가 부족합니다.');
@@ -47,7 +47,7 @@ export default function CartItems() {
 
   // 장바구니 내 상품 영역을 클릭했을 때 실행되는 핸들러 함수입니다.
   const handleClick = (event: any) => {
-    const { products, updateProducts } = useProductsStore();
+    const { products, updateProduct } = useProductsStore();
     const { items, deleteFromCart } = useCartStore();
     const target = event.target;
 
@@ -72,13 +72,14 @@ export default function CartItems() {
         const itemElement = document.getElementById(productId);
         itemElement?.remove();
         deleteFromCart(productId);
-        updateProducts(productId, {
+        updateProduct(productId, {
           quantity: product.quantity + item.quantity,
         });
       }
     }
   };
 
+  // 이벤트 리스너 등록
   addEvent(cartItems, 'click', handleClick);
 
   const render = () => {
@@ -86,13 +87,14 @@ export default function CartItems() {
 
     items.forEach((item) => {
       let itemElement = document.getElementById(item.id);
-
+      // 장바구니에 아이템이 이미 추가된 상태라면 상품의 수량만 변경합니다.
       if (itemElement) {
         const itemInformation = document.querySelector(`#${item.id} span`);
         if (itemInformation) {
           itemInformation.textContent = `${item.name} - ${item.price}원 x ${item.quantity}`;
         }
       } else {
+        // 선택한 상품을 장바구니에 추가합니다.
         itemElement = document.createElement('div');
         itemElement.id = item.id;
         itemElement.className = 'flex justify-between items-center mb-2';
