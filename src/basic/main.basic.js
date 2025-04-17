@@ -1,6 +1,5 @@
 import { createElement } from '../shared/lib/utils';
 import { products } from '../shared/config/product';
-import { BASE_STYLES } from '../shared/styles/base';
 import { HomePage } from './pages';
 
 // TODO: 파일 분리
@@ -10,14 +9,6 @@ let lastSelectedProductId;
 const renderElement = () => {
   // 페이지 컴포넌트를 호출합니다.
   HomePage();
-
-  // wrapper 엘리먼트에 제목, 셀렉트 엘리먼트 등을 추가합니다.
-  const wrapper = document.getElementById('wrapper');
-
-  createElement(wrapper, 'div', {
-    id: 'stock-status',
-    className: BASE_STYLES.STOCK_STATUS,
-  });
 };
 
 // TODO: 함수 주석은 더 상세하게 달기
@@ -87,27 +78,11 @@ const updateSelectOptions = (productId) => {
   }
 };
 
-// 상품들의 재고 정보를 업데이트합니다.
-const updateStockInfo = () => {
-  const stockInfo = document.getElementById('stock-status');
-  let infoMsg = '';
-
-  products.forEach((item) => {
-    if (item.quantity < 5) {
-      infoMsg += `${item.name}: ${
-        item.quantity > 0 ? '재고 부족 (' + item.quantity + '개 남음)' : '품절'
-      }\n`;
-    }
-  });
-
-  stockInfo.textContent = infoMsg;
-};
-
 const main = () => {
   renderElement();
   updateSelectOptions();
-  notifyLuckySale();
-  notifyPurchaseSuggestion();
+  // notifyLuckySale();
+  // notifyPurchaseSuggestion();
 };
 
 main();

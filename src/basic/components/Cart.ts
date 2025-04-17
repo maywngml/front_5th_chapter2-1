@@ -1,6 +1,7 @@
 import CartItems from './CartItems';
 import ProductSelect from './ProductSelect';
 import CartTotal from './CartTotal';
+import StockStatus from './StockStatus';
 
 export default function Cart() {
   const wrapper = document.createElement('div');
@@ -15,6 +16,7 @@ export default function Cart() {
     wrapper.appendChild(CartItems());
     wrapper.appendChild(CartTotal());
     wrapper.appendChild(ProductSelect());
+    wrapper.appendChild(StockStatus());
   };
 
   render();
