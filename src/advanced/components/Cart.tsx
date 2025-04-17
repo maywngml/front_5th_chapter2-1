@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useProducts } from '../context/ProductsContext';
 import CartItems from './CartItems';
 import CartTotal from './CartTotal';
+import ProductSelect from './ProductSelect';
 
 const LUCKY_SALE_DISCOUNT_RATE = 0.8;
 const SUGGESTION_SALE_DISCOUNT_RATE = 0.95;
@@ -67,6 +68,7 @@ export default function Cart() {
       <h1 className='text-2xl font-bold mb-4'>장바구니</h1>
       <CartItems />
       <CartTotal />
+      <ProductSelect />
     </div>
   );
 }
