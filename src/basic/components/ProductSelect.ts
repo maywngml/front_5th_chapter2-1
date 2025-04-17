@@ -52,7 +52,7 @@ export default function ProductSelect() {
 
   // 장바구니 상품 추가 버튼 클릭 시 실행되는 핸들러 함수입니다.
   const handleClick = () => {
-    const { products } = useProductsStore();
+    const { products, updateLastSelectedProductId } = useProductsStore();
     const { items } = useCartStore();
 
     // 옵션에서 선택한 상품의 id
@@ -82,8 +82,7 @@ export default function ProductSelect() {
       addProductInCart(selectedProduct);
     }
 
-    // TODO: productStore에 추가
-    // lastSelectedProductId = selectedProductId;
+    updateLastSelectedProductId(selectedProductId);
   };
 
   addEvent(addToCartButton, 'click', handleClick);
