@@ -3,6 +3,7 @@ import type { Product } from '../types/product';
 
 interface ProductsState {
   products: Product[];
+  lastSelectedProductId: string | null;
 }
 
 type ProductsAction = {
@@ -10,6 +11,10 @@ type ProductsAction = {
     state: ProductsState,
     id: string,
     options: Partial<Product>,
+  ) => ProductsState;
+  updateLastSelectedProductId: (
+    state: ProductsState,
+    id: string,
   ) => ProductsState;
 };
 
@@ -52,6 +57,7 @@ export const productsStore = createStore<ProductsState, ProductsAction>(
         discountRate: 0.25,
       },
     ],
+    lastSelectedProductId: null,
   },
   {
     updateProducts(
@@ -62,7 +68,10 @@ export const productsStore = createStore<ProductsState, ProductsAction>(
       const newProducts = state.products.map((product) =>
         product.id === id ? { ...product, ...options } : product,
       );
-      return { products: newProducts };
+      return { ...state, products: newProducts };
+    },
+    updateLastSelectedProductId(state: ProductsState, id: string) {
+      return { ...state, lastSelectedProductId: id };
     },
   },
 );
